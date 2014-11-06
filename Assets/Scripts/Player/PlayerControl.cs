@@ -14,11 +14,11 @@ public class PlayerControl : MonoBehaviour {
 	float moveLerper = 0.0f;
 
 	public Camera camera;
-	Rigidbody body;
+	Transform body;
 
 	// Use this for initialization
 	void Start () {
-		body = this.rigidbody;
+		body = this.transform;
 		camera.transform.position = new Vector3 (body.position.x + cameraX, body.position.y + cameraY, body.position.z + cameraZ);
 		camera.transform.LookAt (body.position);
 	}
@@ -42,8 +42,15 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		moveDirection = new Vector3(Mathf.Lerp (0, Input.GetAxis("Horizontal") * maxSpeed, moveLerper), 0, Mathf.Lerp (0, Input.GetAxis("Vertical") * maxSpeed, moveLerper));
-		                           
-		body.MovePosition (body.position + moveDirection);
+		var moveMagnitude = moveDirection.magnitude;
+		var normDir = moveDirection / moveMagnitude;
+		if (!Physics.Raycast (body.position, normDir, moveMagnitude)) 
+		{
+			body.position = body.position + moveDirection;
+		}
+
+
+
 
 		camera.transform.position = new Vector3 (body.position.x + cameraX, body.position.y + cameraY, body.position.z + cameraZ);
 		camera.transform.LookAt (body.position);
