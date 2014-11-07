@@ -48,9 +48,6 @@ public class PlayerControl : MonoBehaviour {
 			body.position = body.position + moveDirection;
 		}
 
-
-
-
 		camera.transform.position = new Vector3 (body.position.x + cameraX, body.position.y + cameraY, body.position.z + cameraZ);
 		camera.transform.LookAt (body.position);
 	}

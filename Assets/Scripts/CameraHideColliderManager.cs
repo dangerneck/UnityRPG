@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 
 public class CameraHideColliderManager : MonoBehaviour {
@@ -21,13 +22,17 @@ public class CameraHideColliderManager : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		other.renderer.enabled = false;
-		Debug.Log ("Hiding guy");
+		var renderers = other.GetComponentsInChildren<Renderer>().ToList ();
+		foreach(var renderer in renderers){
+			renderer.enabled = false;
+		}
 	}
 
 	void OnTriggerExit(Collider other)
 	{
-		other.renderer.enabled = true;
-		Debug.Log ("Showing guy");
+		var renderers = other.GetComponentsInChildren<Renderer>().ToList ();
+		foreach(var renderer in renderers){
+			renderer.enabled = true;
+		}
 	}
 }
