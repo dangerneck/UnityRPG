@@ -8,18 +8,21 @@ public class HideOnAbovePlayer : MonoBehaviour {
 	
 	public Transform player;
 	public Camera camera;
+	public BoxCollider collider;
 	List<Renderer> hiddenRenderers;
+	float hideAtY;
 	
 	// Use this for initialization
 	void Start () {
 		hiddenRenderers = new List<Renderer> ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		RaycastHit checkIntersect;
+		hideAtY = -100;
 
-		var distance = 5;
+		var distance = 10;
 		var direction = Vector3.up;
 		
 		foreach(var r in hiddenRenderers)
@@ -31,8 +34,9 @@ public class HideOnAbovePlayer : MonoBehaviour {
 		
 		if (Physics.Raycast(player.transform.position, direction, out checkIntersect, distance, LayerMask.GetMask("Roof")))
 		{
-			hiddenRenderers.Add(checkIntersect.transform.renderer);
-			checkIntersect.transform.renderer.enabled = false;
+			if (checkIntersect.point.y > hideAtY){
+				hideAtY = checkIntersect.point.y;
+			}
 		}
 		
 		

@@ -44,8 +44,7 @@ public class PlayerControl : MonoBehaviour {
 		moveDirection = new Vector3(Mathf.Lerp (0, Input.GetAxis("Horizontal") * maxSpeed, moveLerper), 0, Mathf.Lerp (0, Input.GetAxis("Vertical") * maxSpeed, moveLerper));
 		var moveMagnitude = moveDirection.magnitude;
 		var normDir = moveDirection / moveMagnitude;
-		if (!Physics.Raycast (body.position, normDir, moveMagnitude)) 
-		{
+		if (!Physics.Raycast (body.position, normDir, moveMagnitude)) {
 			body.position = body.position + moveDirection;
 		}
 

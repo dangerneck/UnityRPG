@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\CameraHideColliderManager.cs" />
      <Compile Include="Assets\Scripts\HideOnAbovePlayer.cs" />
      <Compile Include="Assets\Scripts\HideOnCameraLine.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerControl.cs" />
