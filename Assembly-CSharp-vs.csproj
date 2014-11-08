@@ -46,10 +46,21 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\CameraHideColliderManager.cs" />
-     <Compile Include="Assets\Scripts\HideOnAbovePlayer.cs" />
-     <Compile Include="Assets\Scripts\HideOnCameraLine.cs" />
+     <Compile Include="Assets\Scripts\Containers\ContainedObjectModel.cs" />
+     <Compile Include="Assets\Scripts\Containers\Container.cs" />
+     <Compile Include="Assets\Scripts\Containers\ContainerModel.cs" />
+     <Compile Include="Assets\Scripts\Game\DefaultGame.cs" />
+     <Compile Include="Assets\Scripts\Game\GameManager.cs" />
+     <Compile Include="Assets\Scripts\Game\GameStateModel.cs" />
+     <Compile Include="Assets\Scripts\Game\SceneModel.cs" />
+     <Compile Include="Assets\Scripts\Player\CameraHideColliderManager.cs" />
+     <Compile Include="Assets\Scripts\Player\HideOnAbovePlayer.cs" />
+     <Compile Include="Assets\Scripts\Player\HideOnCameraLine.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerControl.cs" />
+     <Compile Include="Assets\Scripts\Player\PlayerStateModel.cs" />
+ <Reference Include="Newtonsoft.Json">
+ <HintPath>/Users/andrewmoore/Unity/CrapGame/Assets/Plugins/Newtonsoft.Json.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
