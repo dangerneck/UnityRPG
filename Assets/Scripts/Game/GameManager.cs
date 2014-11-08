@@ -14,7 +14,6 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 		DontDestroyOnLoad(this);
 		Game = new GameStateModel();
-		string test = Newtonsoft.Json.JavaScriptConvert.SerializeObject(Game);
 	}
 	
 	// Update is called once per frame
