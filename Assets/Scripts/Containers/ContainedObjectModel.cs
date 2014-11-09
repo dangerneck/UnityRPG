@@ -8,4 +8,9 @@ public class ContainedObjectModel
 	public string Id {get;set;}
 	public int Stacks{get;set;}
 	public string Type;
+
+	public void CreateInWorld(Vector3 position){
+
+	}
+	
 }

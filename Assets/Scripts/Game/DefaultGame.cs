@@ -28,7 +28,10 @@ public class DefaultGame  {
 		});
 		TestScene.Containers.Add (new ContainerModel{
 			ContainerId = "First",
-			containedObjects = t
+			containedObjects = t,
+			Width = 4,
+			Height = 4,
+			GumpPadding = 16
 		});
 
 		TestScene.Objects.Add (new ContainedObjectModel{

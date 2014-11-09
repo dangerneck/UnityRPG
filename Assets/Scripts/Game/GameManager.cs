@@ -9,11 +9,14 @@ public class GameManager : MonoBehaviour {
 	string SavePath = Application.dataPath;
 
 	public GameStateModel Game;
+	public Dictionary<string,Texture> LoadedTextures;
 
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this);
 		Game = new GameStateModel();
+		LoadedTextures = new Dictionary<string,Texture>();
+		LoadAllTextures();
 	}
 	
 	// Update is called once per frame
@@ -52,9 +55,17 @@ public class GameManager : MonoBehaviour {
 			if (c.activeInHierarchy){
 				var comp = c.GetComponent<Container>();
 				if (comp != null){
+					comp.GameManager = this;
 					comp.enabled = true;
 				}
 			}
 		}
+	}
+
+	void LoadAllTextures()
+	{
+		LoadedTextures.Add ("Container Slot", Resources.Load<Texture2D>("Textures/container-slot"));
+		LoadedTextures.Add ("Container Slot Active", Resources.Load<Texture2D>("Textures/container-slot-active"));
+		LoadedTextures.Add ("Fresh Ham", Resources.Load<Texture2D>("Textures/fresh-ham"));
 	}
 }

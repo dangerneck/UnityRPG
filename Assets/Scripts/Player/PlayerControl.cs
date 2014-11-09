@@ -8,49 +8,60 @@ public class PlayerControl : MonoBehaviour {
 	public float cameraZ = 0f;
 	public float cameraX = 3f;
 	public float accelerationPercent = 0.2f;
-
 	public float playerSize = 1.0f;
 	public Vector3[] playerBounds;
+	public GameObject controlFocus;
+	public Camera camera;
+	public ContainerModel inventory;
 
 	Vector3 moveDirection;
 	float moveSpeed;
-
 	float moveLerper = 0.0f;
-
-
-	public Camera camera;
 	Transform body;
-
-	// Use this for initialization
+	
 	void Start () {
 		body = this.transform;
+		controlFocus = this.gameObject;
 		camera.transform.position = new Vector3 (body.position.x + cameraX, body.position.y + cameraY, body.position.z + cameraZ);
 		camera.transform.LookAt (body.position);
 		playerBounds = new Vector3[4];
+		inventory = new ContainerModel();
+	}
+
+	public void ClaimControlFocus(GameObject g = null){
+		if (g == null){
+			controlFocus = this.gameObject;
+		}else{
+			controlFocus = g;
+		}
 	}
 
 	void FixedUpdate () {
 
-		// Handle move acceleration through lerp
-		if (Input.GetAxis ("Horizontal") != 0 || Input.GetAxis ("Vertical") != 0) 
-		{
-			if (moveLerper != 1)
+		if (controlFocus == this.gameObject){
+			// Handle move acceleration through lerp
+			if (Input.GetAxis ("Horizontal") != 0 || Input.GetAxis ("Vertical") != 0) 
 			{
-				if (moveLerper > 1){
-					moveLerper = 1;
-				}else{
-					moveLerper += accelerationPercent;
+				if (moveLerper != 1)
+				{
+					if (moveLerper > 1){
+						moveLerper = 1;
+					}else{
+						moveLerper += accelerationPercent;
+					}
 				}
-			}
-		} else {
-			if (moveLerper != 0)
-			{
-				moveLerper = 0;
-			}
+			} else {
+				if (moveLerper != 0)
+				{
+					moveLerper = 0;
+				}
+			}	
+			moveDirection = new Vector3(Mathf.Lerp (0, Input.GetAxis("Horizontal") * maxSpeed, moveLerper), 0, Mathf.Lerp (0, Input.GetAxis("Vertical") * maxSpeed, moveLerper));
+		}else{
+			moveDirection = new Vector3(0,0,0);
 		}
 
 		// Collision detection for move
-		moveDirection = new Vector3(Mathf.Lerp (0, Input.GetAxis("Horizontal") * maxSpeed, moveLerper), 0, Mathf.Lerp (0, Input.GetAxis("Vertical") * maxSpeed, moveLerper));
 		var moveMagnitude = moveDirection.magnitude;
 		var normDir = moveDirection / moveMagnitude;
 
