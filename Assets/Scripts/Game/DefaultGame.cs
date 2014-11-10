@@ -13,8 +13,13 @@ public class DefaultGame  {
 		Game.ActiveSave = "Default";
 		Game.GlobalFlags.Add("HasOpenedContainer", false);
 
+		var c = new ContainerModel();
+		c.Width = 4;
+		c.Height = 4;
+		c.ContainerId = "Inventory";
 		Game.PlayerState = new PlayerStateModel{
-			Name = "Asshole"
+			Name = "Asshole",
+			Inventory = c
 		};
 
 		SceneModel TestScene = new SceneModel();
@@ -31,7 +36,6 @@ public class DefaultGame  {
 			containedObjects = t,
 			Width = 4,
 			Height = 4,
-			GumpPadding = 16
 		});
 
 		TestScene.Objects.Add (new ContainedObjectModel{

@@ -58,9 +58,6 @@
      <Compile Include="Assets\Scripts\Player\HideOnCameraLine.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerControl.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStateModel.cs" />
- <Reference Include="Newtonsoft.Json">
- <HintPath>/Users/andrewmoore/Unity/CrapGame/Assets/Plugins/Newtonsoft.Json.dll</HintPath>
- </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

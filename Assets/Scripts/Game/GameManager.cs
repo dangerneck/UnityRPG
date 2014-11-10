@@ -24,13 +24,16 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyDown("space")){
 			StartGame ();
 		}
+		if (Input.GetKeyDown ("t")){
+			SaveGame();
+		}
 	}
 
 	void StartGame(string saveId = "default")
 	{
 		if (saveId != "default"){
 			string saveString = System.IO.File.ReadAllText(SavePath + Path.DirectorySeparatorChar + "Save" + Path.DirectorySeparatorChar + saveId);
-			Game = (GameStateModel)Newtonsoft.Json.JavaScriptConvert.DeserializeObject(saveString, typeof(GameStateModel));
+			//Game = (GameStateModel)Newtonsoft.Json.JavaScriptConvert.DeserializeObject(saveString, typeof(GameStateModel));
 			ChangeScene (Game.Scene.Name);
 		}else{
 			var d = new DefaultGame();
@@ -58,14 +61,34 @@ public class GameManager : MonoBehaviour {
 					comp.GameManager = this;
 					comp.enabled = true;
 				}
+				// Instead we should instantiate the player prefab but let's just do this for now TODO
+				var player = c.GetComponent<PlayerControl>();
+				if (player != null)
+				{
+					player.GameManager = this;
+					player.enabled = true;
+					player.State = Game.PlayerState;
+				}
 			}
 		}
 	}
 
 	void LoadAllTextures()
 	{
+		LoadedTextures.Add ("Placeholder Container", Resources.Load<Texture2D>("Textures/container-placeholder"));
 		LoadedTextures.Add ("Container Slot", Resources.Load<Texture2D>("Textures/container-slot"));
 		LoadedTextures.Add ("Container Slot Active", Resources.Load<Texture2D>("Textures/container-slot-active"));
 		LoadedTextures.Add ("Fresh Ham", Resources.Load<Texture2D>("Textures/fresh-ham"));
+
+	}
+
+	void SaveGame()
+	{
+
+	}
+
+	void LoadGame()
+	{
+
 	}
 }

@@ -6,12 +6,10 @@ using System.Linq;
 public class Container : MonoBehaviour
 {
 	public GameManager GameManager;
-	public List<ContainedObjectModel> containedObjects;
+	public ContainerModel State;
 	public string ContainerId;
 	public Texture Gump;
 	public float GumpPadding;
-	public int Width;
-	public int Height;
 
 	bool Opened;
 	int Pointer = 0;
@@ -21,10 +19,7 @@ public class Container : MonoBehaviour
 	void Start ()
 	{
 		var loadedContainer = FindObjectOfType<GameManager>().Game.Scene.Containers.Where(c => c.ContainerId == ContainerId).FirstOrDefault();
-		containedObjects = loadedContainer.containedObjects;
-		GumpPadding = loadedContainer.GumpPadding;
-		Width = loadedContainer.Width;
-		Height = loadedContainer.Height;
+		State = loadedContainer; 
 	}
 
 	// Update is called once per frame
@@ -53,30 +48,31 @@ public class Container : MonoBehaviour
 					Pointer++;
 				}
 				if (Input.GetKeyDown("up")){
-					Pointer -= Width;
+					Pointer -= State.Width;
 				}
 				if (Input.GetKeyDown("down")){
-					Pointer += Width;
+					Pointer += State.Width;
 				}
 
 				if (Input.GetKeyDown("z")){
-					var o = containedObjects.ElementAt(Pointer);
+					var o = State.containedObjects.ElementAt(Pointer);
 					if (o != null){
-						playerControl.inventory.containedObjects.Add(o);
-						containedObjects.Remove (o);
+						if (playerControl.State.Inventory.Add(o)){
+							State.containedObjects.Remove (o);
+						}
 					}
 				}
 
 				if (Input.GetKeyDown("x")){
-					var o = containedObjects.ElementAt(Pointer);
+					var o = State.containedObjects.ElementAt(Pointer);
 					if (o != null){
 						o.CreateInWorld(playerControl.gameObject.transform.position);
-						containedObjects.Remove (o);
+						State.containedObjects.Remove (o);
 					}
 				}
 
 				if (Pointer < 0){ Pointer = 0; }
-				if (Pointer > Width * Height - 1){ Pointer = Width * Height - 1; }
+				if (Pointer > State.Width * State.Height - 1){ Pointer = State.Width * State.Height - 1; }
 
 				if (Input.GetKeyDown("c")){
 					Close ();
@@ -94,20 +90,20 @@ public class Container : MonoBehaviour
 			float hCenter = Screen.height/2;
 			float cx = wCenter - Gump.width/2;
 			float cy = hCenter - Gump.height/2;
-			int centreW = Width/2;
-			int centreH = Height/2;
+			int centreW = State.Width/2;
+			int centreH = State.Height/2;
 			GUI.DrawTexture(new Rect(cx, cy, Gump.width, Gump.height), Gump);
 			var textures = GameManager.LoadedTextures;
 
-			for(int j = 0; j < Width; j++){
-				for (int i = 0; i < Height; i++){
+			for(int j = 0; j < State.Width; j++){
+				for (int i = 0; i < State.Height; i++){
 					float spaceX = wCenter - ((centreW - i) * 32);
 					float spaceY = hCenter - ((centreH - j) * 32);
-					bool active = i +(j*Width) == Pointer;
+					bool active = i +(j*State.Width) == Pointer;
 					GUI.DrawTexture(new Rect(spaceX, spaceY, 32, 32), active ? textures["Container Slot Active"]: textures["Container Slot"]);
-					if (containedObjects.Count >= (i+j*Width)+1){
-						if (containedObjects.ElementAt (i+j*Width) != null){
-							GUI.DrawTexture(new Rect(spaceX, spaceY, 32, 32), textures[containedObjects.ElementAt (i+j*Width).Type]);
+					if (State.containedObjects.Count >= (i+j*State.Width)+1){
+						if (State.containedObjects.ElementAt (i+j*State.Width) != null){
+							GUI.DrawTexture(new Rect(spaceX, spaceY, 32, 32), textures[State.containedObjects.ElementAt (i+j*State.Width).Type]);
 						}
 					}
 				}
@@ -126,7 +122,7 @@ public class Container : MonoBehaviour
 
 	void Close()
 	{
-		GameManager.Game.Scene.Containers.Where (c => c.ContainerId == ContainerId).FirstOrDefault().containedObjects = containedObjects;
+		GameManager.Game.Scene.Containers.Where (c => c.ContainerId == ContainerId).FirstOrDefault().containedObjects = State.containedObjects;
 		Opened = false;
 		GameObject.Find ("Player").GetComponent<PlayerControl>().ClaimControlFocus();
 	}
