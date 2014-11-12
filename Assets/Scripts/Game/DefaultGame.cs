@@ -11,7 +11,10 @@ public class DefaultGame  {
 		Game = new GameStateModel();
 
 		Game.ActiveSave = "Default";
-		Game.GlobalFlags.Add("HasOpenedContainer", false);
+		Game.GlobalFlags.Add(new GameFlag{
+			Name = "HasOpenedContainer",
+			State = false
+		});
 
 		var c = new ContainerModel();
 		c.Width = 4;
@@ -43,7 +46,6 @@ public class DefaultGame  {
 			Stackable = false,
 			Type = "Fresh Ham"
 		});
-
 
 		Game.Scenes.Add (TestScene);
 

@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class ContainedObjectModel
 {
