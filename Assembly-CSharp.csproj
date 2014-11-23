@@ -54,6 +54,11 @@
      <Compile Include="Assets\Scripts\Game\GameManager.cs" />
      <Compile Include="Assets\Scripts\Game\GameStateModel.cs" />
      <Compile Include="Assets\Scripts\Game\SceneModel.cs" />
+     <Compile Include="Assets\Scripts\NPCs\DialogItem.cs" />
+     <Compile Include="Assets\Scripts\NPCs\DialogState.cs" />
+     <Compile Include="Assets\Scripts\NPCs\NPC.cs" />
+     <Compile Include="Assets\Scripts\NPCs\NPCStateModel.cs" />
+     <Compile Include="Assets\Scripts\NPCs\ScheduleItem.cs" />
      <Compile Include="Assets\Scripts\Player\CameraHideColliderManager.cs" />
      <Compile Include="Assets\Scripts\Player\HideOnAbovePlayer.cs" />
      <Compile Include="Assets\Scripts\Player\HideOnCameraLine.cs" />

@@ -4,17 +4,25 @@ using System.Collections.Generic;
 
 public class GameStateModel
 {
-		public string ActiveSave;
-		public List<GameFlag> GlobalFlags;
-		public List<SceneModel> Scenes;
-		public PlayerStateModel PlayerState;
-		public SceneModel Scene;
+	public string ActiveSave;
+	public List<GameFlag> GlobalFlags;
+	public List<SceneModel> Scenes;
+	public PlayerStateModel PlayerState;
+	public SceneModel Scene;
 
-		public GameStateModel ()
-		{
-				GlobalFlags = new List<GameFlag> ();
-				Scenes = new List<SceneModel> ();
-				PlayerState = new PlayerStateModel ();
-				Scene = new SceneModel ();
+	public int Day;
+	public int Time;
+	public int WeekDay{
+		get{
+			return Day % 7;
 		}
+	}
+
+	public GameStateModel ()
+	{
+			GlobalFlags = new List<GameFlag> ();
+			Scenes = new List<SceneModel> ();
+			PlayerState = new PlayerStateModel ();
+			Scene = new SceneModel ();
+	}
 }

@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyDown ("t")){
 			SaveGame();
 		}
+
+		HandleTime(Time.deltaTime);
 	}
 
 	void StartGame(string saveId = "Default")
@@ -81,6 +83,16 @@ public class GameManager : MonoBehaviour {
 		LoadedTextures.Add ("Container Slot Active", Resources.Load<Texture2D>("Textures/container-slot-active"));
 		LoadedTextures.Add ("Fresh Ham", Resources.Load<Texture2D>("Textures/fresh-ham"));
 
+	}
+
+	void HandleTime(float t)
+	{
+		Game.Time += t;
+		if (Game.Time >= 1440){
+			float d = Game.Time - 1440;
+			Game.Time = d;
+			Game.Day += 1;
+		}
 	}
 
 	void SaveGame()
