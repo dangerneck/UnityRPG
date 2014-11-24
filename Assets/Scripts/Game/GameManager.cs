@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour {
 
 	public GameStateModel Game;
 	public Dictionary<string,Texture> LoadedTextures;
+	public int ScreenHeight;
+	public int ScreenWidth;
+	public float ScreenXCenter;
+	public float ScreenYCenter;
 
 	// Use this for initialization
 	void Start () {
@@ -18,6 +22,10 @@ public class GameManager : MonoBehaviour {
 		Game = new GameStateModel();
 		LoadedTextures = new Dictionary<string,Texture>();
 		LoadAllTextures();
+		ScreenHeight = Screen.height;
+		ScreenWidth = Screen.width;
+		ScreenXCenter = ScreenWidth / 2;
+		ScreenYCenter = ScreenHeight / 2;
 	}
 	
 	// Update is called once per frame
@@ -59,10 +67,12 @@ public class GameManager : MonoBehaviour {
 		GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>() ;
 		foreach (var c in allObjects){
 			if (c.activeInHierarchy){
-				var comp = c.GetComponent<Container>();
-				if (comp != null){
-					comp.GameManager = this;
-					comp.enabled = true;
+				var comt = c.GetComponent<Container>();
+				var npc = c.GetComponent<NPC>();
+
+				if (comt != null){
+					comt.GameManager = this;
+					comt.enabled = true;
 				}
 				// Instead we should instantiate the player prefab but let's just do this for now TODO
 				var player = c.GetComponent<PlayerControl>();
@@ -71,6 +81,12 @@ public class GameManager : MonoBehaviour {
 					player.GameManager = this;
 					player.enabled = true;
 					player.State = Game.PlayerState;
+				}
+
+				// This is where you'd create NPCs in the current scene.
+				if (npc != null){
+					npc.GameManager = this;
+					npc.enabled = true;
 				}
 			}
 		}

@@ -11,6 +11,11 @@ public class Container : MonoBehaviour
 	public Texture Gump;
 	public float GumpPadding;
 
+	float cx;
+	float cy;
+	int centreW;
+	int centreH;
+
 	bool Opened;
 	int Pointer = 0;
 
@@ -20,6 +25,11 @@ public class Container : MonoBehaviour
 	{
 		var loadedContainer = FindObjectOfType<GameManager>().Game.Scene.Containers.Where(c => c.ContainerId == ContainerId).FirstOrDefault();
 		State = loadedContainer; 
+
+		cx = GameManager.ScreenXCenter - Gump.width/2;
+		cy = GameManager.ScreenYCenter - Gump.height/2;
+		centreW = State.Width/2;
+		centreH = State.Height/2;
 	}
 
 	// Update is called once per frame
@@ -86,19 +96,14 @@ public class Container : MonoBehaviour
 	{
 		if (Opened)
 		{
-			float wCenter = Screen.width/2;
-			float hCenter = Screen.height/2;
-			float cx = wCenter - Gump.width/2;
-			float cy = hCenter - Gump.height/2;
-			int centreW = State.Width/2;
-			int centreH = State.Height/2;
+
 			GUI.DrawTexture(new Rect(cx, cy, Gump.width, Gump.height), Gump);
 			var textures = GameManager.LoadedTextures;
 
 			for(int j = 0; j < State.Width; j++){
 				for (int i = 0; i < State.Height; i++){
-					float spaceX = wCenter - ((centreW - i) * 32);
-					float spaceY = hCenter - ((centreH - j) * 32);
+					float spaceX = GameManager.ScreenXCenter - ((centreW - i) * 32);
+					float spaceY = GameManager.ScreenYCenter - ((centreH - j) * 32);
 					bool active = i +(j*State.Width) == Pointer;
 					GUI.DrawTexture(new Rect(spaceX, spaceY, 32, 32), active ? textures["Container Slot Active"]: textures["Container Slot"]);
 					if (State.containedObjects.Count >= (i+j*State.Width)+1){

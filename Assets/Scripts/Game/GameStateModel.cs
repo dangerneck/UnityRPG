@@ -11,7 +11,7 @@ public class GameStateModel
 	public SceneModel Scene;
 
 	public int Day;
-	public int Time;
+	public float Time;
 	public int WeekDay{
 		get{
 			return Day % 7;
