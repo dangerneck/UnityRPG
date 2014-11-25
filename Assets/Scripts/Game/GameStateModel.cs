@@ -7,6 +7,7 @@ public class GameStateModel
 	public string ActiveSave;
 	public List<GameFlag> GlobalFlags;
 	public List<SceneModel> Scenes;
+	public List<NPCStateModel> NPCs;
 	public PlayerStateModel PlayerState;
 	public SceneModel Scene;
 
@@ -23,6 +24,7 @@ public class GameStateModel
 			GlobalFlags = new List<GameFlag> ();
 			Scenes = new List<SceneModel> ();
 			PlayerState = new PlayerStateModel ();
+			NPCs = new List<NPCStateModel>();
 			Scene = new SceneModel ();
 	}
 }

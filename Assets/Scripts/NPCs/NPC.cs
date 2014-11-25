@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System.Collections.Generic;
 
 public class NPC : MonoBehaviour {
+
+	public string Name;
 
 	public NPCStateModel State{get;set;}
 	public string CurrentActivity{get;set;}
@@ -11,19 +14,27 @@ public class NPC : MonoBehaviour {
 	bool DialogOpen = false;
 	DialogItem CurrentDialogItem;
 	int DialogStateIndex;
+	List<DialogItem> AvailableDialogOptions;
 
 	// Dialog GUI
-	float padding = 0.1f;
+	float padding = 0.05f;
 	float lineHeight;
-	float optionsHeight;
 
 	Rect textRect;
 	Rect continueRect;
 	Rect optionsRect;
 	Rect contentRect;
 
-	// Use this for initialization
 	void Start () {
+
+		State = GameManager.Game.NPCs.FirstOrDefault(n => n.Name == Name);
+
+		if (State == null){ enabled = false; }
+
+		CurrentDialogItem = State.Dialog.First (d => d.Id == 0);
+		DialogStateIndex = 0;
+		AvailableDialogOptions = CurrentDialogItem.Links.Select (i => this.State.Dialog.FirstOrDefault(d => d.Id == i)).ToList ();
+
 		var sw = GameManager.ScreenWidth;
 		var sh = GameManager.ScreenHeight;
 		var scx = GameManager.ScreenXCenter;
@@ -36,23 +47,37 @@ public class NPC : MonoBehaviour {
 
 		lineHeight = contentRect.height * padding;
 
-		textRect = new Rect(contentRect.x + contentRect.width * padding, contentRect.y + contentRect.height * padding, contentRect.width*(1-padding*2), contentRect.height*(1-padding*2)*0.3f);
+		textRect = new Rect(contentRect.x + contentRect.width * padding, contentRect.y + contentRect.height * padding, contentRect.width*(1-padding*2), contentRect.height*(1-padding*2)*0.4f);
 		continueRect = new Rect(textRect.x, textRect.yMax + lineHeight, textRect.width, lineHeight * 1);
 		optionsRect = new Rect(continueRect.x, continueRect.yMax + lineHeight, textRect.width, textRect.height);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		// do whatever current activity
 
+	void Update () {
+		if (Input.GetKeyDown ("d")){
+			if (!DialogOpen){
+				OpenDialog ();
+			}else{
+				CloseDialog ();
+			}
+		}
 	}
 
-	void OnGui(){
+	void OnGUI(){
 		if (DialogOpen){
-			GUI.Box (contentRect, "Dialog");
-			GUI.Box (textRect, "Content");
-			GUI.Box (continueRect, "Continue...");
-			GUI.Box (optionsRect, "Options...");
+			GUI.Box (contentRect, "");
+			GUI.Box (textRect, "");
+			GUI.Label (textRect, CurrentDialogItem.DialogState.Text[DialogStateIndex]);
+			if (CurrentDialogItem.DialogState.Text.Length > DialogStateIndex+1){
+				GUI.Box (continueRect, "");
+				GUI.Label (continueRect, "Continue...");
+			}
+			GUI.BeginScrollView(optionsRect,new Vector2(0.0f,0.0f),optionsRect);
+			int c = 0;
+			foreach(var d in AvailableDialogOptions){
+				GUI.Label (new Rect(optionsRect.x,optionsRect.y + c * lineHeight, optionsRect.width, lineHeight), d.Name);
+				c++;   
+			}
+			GUI.EndScrollView();
 		}
 	}
 

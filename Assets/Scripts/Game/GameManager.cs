@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown("space")){
-			StartGame ("Asshole");
+			StartGame ();
 		}
 		if (Input.GetKeyDown ("t")){
 			SaveGame();
