@@ -77,13 +77,14 @@ public class DefaultGame  {
 		d.Add (new DialogItem{
 			Id = 1,
 			Name = "Option for 2",
-			DialogState = ds,
-			Links = new int[]{0,2}.ToList()
+			DialogState = dss,
+			Links = new int[]{0,2}.ToList(),
+			OnSelect = () => Debug.Log ("This is a delegate passed into the guy!")
 		});
 		d.Add (new DialogItem{
 			Id = 2,
 			Name = "Let's move along to 3",
-			DialogState = ds,
+			DialogState = dsss,
 			Links = new int[]{1}.ToList()
 		});
 
@@ -91,7 +92,8 @@ public class DefaultGame  {
 		Game.NPCs.Add (new NPCStateModel{
 			Name = "FirstNPC",
 			Position = new Vector3(3,3,3),
-			Dialog = d
+			Dialog = d,
+			InitialDialogOptionId = 0
 		});
 
 		// ---- Game State Intialization

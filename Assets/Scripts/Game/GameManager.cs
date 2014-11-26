@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
 	string SavePath = Application.dataPath;
 
 	public GameStateModel Game;
+	public DefaultGame DGame;
 	public Dictionary<string,Texture> LoadedTextures;
 	public int ScreenHeight;
 	public int ScreenWidth;
@@ -26,12 +27,13 @@ public class GameManager : MonoBehaviour {
 		ScreenWidth = Screen.width;
 		ScreenXCenter = ScreenWidth / 2;
 		ScreenYCenter = ScreenHeight / 2;
+		DGame = new DefaultGame();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown("space")){
-			StartGame ();
+			StartGame ("Asshole");
 		}
 		if (Input.GetKeyDown ("t")){
 			SaveGame();
@@ -47,8 +49,7 @@ public class GameManager : MonoBehaviour {
 			Game = (GameStateModel)JavaScriptConvert.DeserializeObject(saveString, typeof(GameStateModel));
 			ChangeScene (Game.Scene.Name);
 		}else{
-			var d = new DefaultGame();
-			Game = d.Game;
+			Game = DGame.Game;
 			ChangeScene (Game.Scene.Name);
 		}
 	}
