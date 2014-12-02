@@ -118,6 +118,17 @@ public class PlayerControl : MonoBehaviour {
 			}
 		}
 
+		if (Input.GetKeyDown ("x")){
+			RaycastHit grabRayHit;
+			if (Physics.SphereCast(body.position, playerSize/6, new Vector3(0,-1,0), out grabRayHit, 1.0f)){
+				var item = grabRayHit.collider.GetComponentInParent<Item>();
+				if (item != null){
+					Debug.Log ("I wanna grab " + grabRayHit.collider.name);
+					// TODO: create this guy
+				}
+			}
+		}
+
 		if (IsInventoryOpen){
 			if (controlFocus == Inventory)
 			{
