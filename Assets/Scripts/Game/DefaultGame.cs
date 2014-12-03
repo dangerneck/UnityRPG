@@ -47,11 +47,14 @@ public class DefaultGame  {
 			Height = 4,
 		});
 
+		// ---- // ---- Scene Items
 		TestScene.Objects.Add (new ContainedObjectModel{
-			Position = new Vector3(5f,5f,5f),
+			Id = System.Guid.NewGuid(),
+			Position = new Vector3(5f,0.51f,5f),
 			Stackable = false,
 			Type = "Fresh Ham"
 		});
+
 
 		// ---- NPCs
 		// ----// ---- NPC Dialog

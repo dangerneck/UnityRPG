@@ -91,6 +91,11 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 		}
+
+		// Instantiate Items
+		foreach(var item in Game.Scene.Objects){
+			item.CreateInWorld();
+		}
 	}
 
 	void LoadAllTextures()

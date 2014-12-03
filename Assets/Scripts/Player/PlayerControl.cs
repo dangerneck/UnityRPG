@@ -124,7 +124,8 @@ public class PlayerControl : MonoBehaviour {
 				var item = grabRayHit.collider.GetComponentInParent<Item>();
 				if (item != null){
 					Debug.Log ("I wanna grab " + grabRayHit.collider.name);
-					// TODO: create this guy
+					State.Inventory.Add (item.State);
+					item.SendMessageUpwards("Destroy");
 				}
 			}
 		}
