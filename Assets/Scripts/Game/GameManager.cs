@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour {
 		if (Input.GetKeyDown("space")){
 			StartGame ("Asshole");
 		}
+		if (Input.GetKeyDown ("z")){
+			StartGame ("Default");
+		}
 		if (Input.GetKeyDown ("t")){
 			SaveGame();
 		}
@@ -45,8 +48,7 @@ public class GameManager : MonoBehaviour {
 	void StartGame(string saveId = "Default")
 	{
 		if (saveId != "Default"){
-			string saveString = System.IO.File.ReadAllText(saveId + ".txt");
-			Game = (GameStateModel)JavaScriptConvert.DeserializeObject(saveString, typeof(GameStateModel));
+			Game = LoadGame(saveId);
 			ChangeScene (Game.Scene.Name);
 		}else{
 			Game = DGame.Game;
@@ -120,15 +122,17 @@ public class GameManager : MonoBehaviour {
 	void SaveGame()
 	{
 		JsonSerializer jss = new JsonSerializer();
+		jss.Converters.Add(new Vector3Converter());
 		jss.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-
 		string game = "";
 		byte[] gameBuffer;
+
+		Game.TestVector = new Vector3(1.0f,2.0f,3.0f);
 
 		if (Game.ActiveSave == "Default"){
 			Game.ActiveSave = Game.PlayerState.Name;
 		}
-		using (FileStream ms = new FileStream(Game.ActiveSave + ".txt", FileMode.OpenOrCreate)){
+		using (FileStream ms = new FileStream(Game.ActiveSave + ".txt", FileMode.Truncate)){
 			using (StreamWriter sw = new StreamWriter(ms)){
 				using (JsonWriter writer = new JsonTextWriter(sw))		
 				{		
@@ -143,9 +147,11 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	void LoadGame()
+	GameStateModel LoadGame(string name)
 	{
-
+		GameStateModel game = new GameStateModel();
+		game = (GameStateModel)JsonConvert.DeserializeObject(System.IO.File.ReadAllText(name + ".txt"), typeof(GameStateModel));
+		return game;
 	}
 }
 

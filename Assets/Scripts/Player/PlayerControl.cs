@@ -124,7 +124,7 @@ public class PlayerControl : MonoBehaviour {
 				var item = grabRayHit.collider.GetComponentInParent<Item>();
 				if (item != null){
 					Debug.Log ("I wanna grab " + grabRayHit.collider.name);
-					State.Inventory.Add (item.State);
+					State.Inventory.containedObjects.Add (item.State);
 					item.SendMessageUpwards("Destroy");
 				}
 			}
@@ -153,8 +153,9 @@ public class PlayerControl : MonoBehaviour {
 				if (Input.GetKeyDown("x")){
 					var o = State.Inventory.containedObjects.ElementAt(InventoryPointer);
 					if (o != null){
-						o.CreateInWorld(this.gameObject.transform.position);
+						o.CreateInWorld(new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y - 0.5f, this.gameObject.transform.position.z));
 						State.Inventory.containedObjects.Remove (o);
+						GameManager.Game.Scene.Objects.Add(o);
 					}
 				}
 				

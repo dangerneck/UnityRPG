@@ -36,9 +36,10 @@ public class DefaultGame  {
 		// ---- // ---- Scene Containers
 		var t = new List<ContainedObjectModel>();
 		t.Add(new ContainedObjectModel{
-			Position = new Vector3(0f,0f,0f),
+			Position = new Vector3(1f,0f,0f),
 			Stackable = false,
-			Type = "Fresh Ham"
+			Type = "Fresh Ham",
+			ItemId = "Fresh Ham One"
 		});
 		TestScene.Containers.Add (new ContainerModel{
 			ContainerId = "First",
@@ -49,10 +50,10 @@ public class DefaultGame  {
 
 		// ---- // ---- Scene Items
 		TestScene.Objects.Add (new ContainedObjectModel{
-			Id = System.Guid.NewGuid(),
 			Position = new Vector3(5f,0.51f,5f),
 			Stackable = false,
-			Type = "Fresh Ham"
+			Type = "Fresh Ham",
+			ItemId = "Fresh Ham Two"
 		});
 
 

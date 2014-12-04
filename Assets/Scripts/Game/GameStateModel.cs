@@ -10,6 +10,7 @@ public class GameStateModel
 	public List<NPCStateModel> NPCs;
 	public PlayerStateModel PlayerState;
 	public SceneModel Scene;
+	public Vector3 TestVector;
 
 	public int Day;
 	public float Time;

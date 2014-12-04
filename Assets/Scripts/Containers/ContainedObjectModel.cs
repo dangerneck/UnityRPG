@@ -7,7 +7,7 @@ public class ContainedObjectModel
 {
 	public Vector3 Position{get;set;}
 	public bool Stackable{get;set;}
-	public Guid Id {get;set;}
+	public string ItemId {get;set;}
 	public int Stacks{get;set;}
 	public string Type;
 
@@ -18,10 +18,8 @@ public class ContainedObjectModel
 		itemInstance.State = this;
 	}
 	public void CreateInWorld(Vector3 position){
-		GameObject prefab = (GameObject)Resources.Load("Prefabs/Item");
-		var instance = (GameObject)UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity);
-		var itemInstance = instance.GetComponent<Item>();
-		itemInstance.State = this;
+		this.Position = position;
+		this.CreateInWorld();
 	}
 	
 }
