@@ -123,9 +123,10 @@ public class PlayerControl : MonoBehaviour {
 			if (Physics.SphereCast(body.position, playerSize/6, new Vector3(0,-1,0), out grabRayHit, 1.0f)){
 				var item = grabRayHit.collider.GetComponentInParent<Item>();
 				if (item != null){
-					Debug.Log ("I wanna grab " + grabRayHit.collider.name);
-					State.Inventory.containedObjects.Add (item.State);
-					item.SendMessageUpwards("Destroy");
+					if (!State.Inventory.IsFull){
+						State.Inventory.containedObjects.Add (item.State);
+						item.SendMessageUpwards("Destroy");
+					}
 				}
 			}
 		}

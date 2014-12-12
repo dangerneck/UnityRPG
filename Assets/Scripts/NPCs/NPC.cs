@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using Pathfinding;
 
 public class NPC : MonoBehaviour {
 
@@ -17,6 +18,8 @@ public class NPC : MonoBehaviour {
 	int DialogStateIndex;
 	List<DialogItem> AvailableDialogOptions;
 
+	ScheduleItem currentScheduleItem;
+
 	// Dialog GUI
 	float padding = 0.05f;
 	float lineHeight;
@@ -26,10 +29,16 @@ public class NPC : MonoBehaviour {
 	Rect optionsRect;
 	Rect contentRect;
 
+	Seeker seeker;
+	float walkSpeed = 3.0f;
+	Path currentPath;
+	int currentWaypoint = 0;
+	float nextWaypointDistance = 1f;
+
 	void Start () {
 
 		State = GameManager.Game.NPCs.FirstOrDefault(n => n.Name == Name);
-
+		seeker = GetComponent<Seeker>();
 		var dnpc = GameManager.DGame.Game.NPCs.FirstOrDefault(n => n.Name == Name);
 		State.LifetimeSchedule = dnpc.LifetimeSchedule;
 		State.WeeklySchedule = dnpc.WeeklySchedule;
@@ -55,6 +64,7 @@ public class NPC : MonoBehaviour {
 	}
 
 	void Update () {
+		// Dummy demo dialog dickhole
 		if (Input.GetKeyDown ("d")){
 			if (!DialogOpen){
 				OpenDialog ();
@@ -62,6 +72,38 @@ public class NPC : MonoBehaviour {
 				CloseDialog ();
 			}
 		}
+
+		if (Input.GetKeyDown("p")){
+			var player = GameObject.Find ("Player");
+			currentScheduleItem = new ScheduleItem{
+				Activity = "Wait",
+				Scene = GameManager.Game.Scene.Name
+			};
+			seeker.StartPath (this.transform.position, player.transform.position, OnScheduledPathReady);
+		}
+
+		//CheckSchedule();
+
+		if (currentPath != null){
+			if (currentWaypoint >= currentPath.vectorPath.Count) {
+				currentPath = null;
+				currentWaypoint = 0;
+				OnScheduledPathComplete();
+				return;
+			}
+			
+			//Direction to the next waypoint
+			Vector3 dir = (currentPath.vectorPath[currentWaypoint]-transform.position).normalized;
+			dir *= walkSpeed * Time.fixedDeltaTime;
+			this.transform.Translate (dir);
+			
+			//Check if we are close enough to the next waypoint
+			//If we are, proceed to follow the next waypoint
+			if (Vector3.Distance (transform.position,currentPath.vectorPath[currentWaypoint]) < nextWaypointDistance) {
+				currentWaypoint++;
+			}
+		}
+
 	}
 
 	void OnGUI(){
@@ -113,5 +155,31 @@ public class NPC : MonoBehaviour {
 		ChangeDialogItem(State.Dialog.First (d => d.Id == 0));
 		GameObject.Find ("Player").GetComponent<PlayerControl>().ClaimControlFocus();
 	}
-	
+
+	void CheckSchedule(){
+		var t = (int)GameManager.Game.Time / 60;
+		var d = GameManager.Game.Day;
+		var wd = GameManager.Game.WeekDay;
+
+		var item = this.State.WeeklySchedule.FirstOrDefault(s => s.Weekday == wd && s.Time == t);
+		if (item != null){
+			currentScheduleItem = item;
+			if (currentScheduleItem.Scene == GameManager.Game.Scene.Name){
+				seeker.StartPath (this.transform.position, currentScheduleItem.Position, OnScheduledPathReady);
+			}else{
+				// go to the appropriate exit!
+			}
+		}
+	}
+
+	void OnScheduledPathReady(Path p)
+	{
+		currentPath = p;
+		currentWaypoint = 0;
+	}
+
+	void OnScheduledPathComplete()
+	{
+		this.CurrentActivity = currentScheduleItem.Activity;
+	}
 }

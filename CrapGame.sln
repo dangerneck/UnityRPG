@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 
 Project("{16908F84-BD69-70EE-50BB-5C8EF4EB05FB}") = "CrapGame", "Assembly-CSharp.csproj", "{516E7424-BE5F-2325-7FED-556C72F3E8EE}"
 EndProject
+Project("{16908F84-BD69-70EE-50BB-5C8EF4EB05FB}") = "CrapGame", "Assembly-CSharp-Editor.csproj", "{32550362-4DC4-1C0B-F1DA-B311F265FD4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,11 +15,15 @@ Global
 		{516E7424-BE5F-2325-7FED-556C72F3E8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{516E7424-BE5F-2325-7FED-556C72F3E8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{516E7424-BE5F-2325-7FED-556C72F3E8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32550362-4DC4-1C0B-F1DA-B311F265FD4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32550362-4DC4-1C0B-F1DA-B311F265FD4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32550362-4DC4-1C0B-F1DA-B311F265FD4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32550362-4DC4-1C0B-F1DA-B311F265FD4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-																																												GlobalSection(MonoDevelopProperties) = preSolution
+																																																GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

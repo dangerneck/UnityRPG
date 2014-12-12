@@ -111,11 +111,11 @@ public class GameManager : MonoBehaviour {
 
 	void HandleTime(float t)
 	{
-		Game.Time += t;
-		if (Game.Time >= 1440){
-			float d = Game.Time - 1440;
-			Game.Time = d;
-			Game.Day += 1;
+		this.Game.Time += t;
+		if (this.Game.Time >= 1440){
+			float d = this.Game.Time - 1440;
+			this.Game.Time = d;
+			this.Game.Day += 1;
 		}
 	}
 

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class DefaultGame  {
 
@@ -39,7 +40,7 @@ public class DefaultGame  {
 			Position = new Vector3(1f,0f,0f),
 			Stackable = false,
 			Type = "Fresh Ham",
-			ItemId = "Fresh Ham One"
+			ItemId = Guid.NewGuid().ToString()
 		});
 		TestScene.Containers.Add (new ContainerModel{
 			ContainerId = "First",
@@ -53,7 +54,7 @@ public class DefaultGame  {
 			Position = new Vector3(5f,0.51f,5f),
 			Stackable = false,
 			Type = "Fresh Ham",
-			ItemId = "Fresh Ham Two"
+			ItemId = Guid.NewGuid().ToString()
 		});
 
 

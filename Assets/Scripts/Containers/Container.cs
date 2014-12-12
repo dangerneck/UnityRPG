@@ -67,8 +67,10 @@ public class Container : MonoBehaviour
 				if (Input.GetKeyDown("z")){
 					var o = State.containedObjects.ElementAt(Pointer);
 					if (o != null){
-						if (playerControl.State.Inventory.Add(o)){
-							State.containedObjects.Remove (o);
+						if (!playerControl.State.Inventory.IsFull){
+							if (playerControl.State.Inventory.Add(o)){
+								State.containedObjects.Remove (o);
+							}
 						}
 					}
 				}
@@ -76,7 +78,7 @@ public class Container : MonoBehaviour
 				if (Input.GetKeyDown("x")){
 					var o = State.containedObjects.ElementAt(Pointer);
 					if (o != null){
-						o.CreateInWorld(playerControl.gameObject.transform.position);
+						o.CreateInWorld(new Vector3(playerControl.gameObject.transform.position.x, playerControl.gameObject.transform.position.y - 0.5f, playerControl.gameObject.transform.position.z));
 						State.containedObjects.Remove (o);
 					}
 				}
