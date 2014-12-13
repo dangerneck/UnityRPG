@@ -115,6 +115,7 @@
      <Compile Include="Assets\Scripts\Game\GameFlag.cs" />
      <Compile Include="Assets\Scripts\Game\GameManager.cs" />
      <Compile Include="Assets\Scripts\Game\GameStateModel.cs" />
+     <Compile Include="Assets\Scripts\Game\SceneExitModel.cs" />
      <Compile Include="Assets\Scripts\Game\SceneModel.cs" />
      <Compile Include="Assets\Scripts\Game\Vector3Converter.cs" />
      <Compile Include="Assets\Scripts\NPCs\DialogItem.cs" />

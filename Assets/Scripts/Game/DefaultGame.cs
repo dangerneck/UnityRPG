@@ -34,6 +34,12 @@ public class DefaultGame  {
 		SceneModel TestScene = new SceneModel();
 		TestScene.Name = "TestScene";
 
+		TestScene.Exits = new List<SceneExitModel>();
+		TestScene.Exits.Add (new SceneExitModel{
+			Position = new Vector3(14,3,-13),
+			To = "SceneTwo"
+		});
+
 		// ---- // ---- Scene Containers
 		var t = new List<ContainedObjectModel>();
 		t.Add(new ContainedObjectModel{
@@ -93,12 +99,50 @@ public class DefaultGame  {
 			Links = new int[]{1}.ToList()
 		});
 
+
+		List<ScheduleItem> sch = new List<ScheduleItem>();
+		sch.Add(new ScheduleItem{
+			Day = 0,
+			Weekday = 0,
+			Hour = 0,
+			Activity = "Stand",
+			Scene = "TestScene",
+			Position = new Vector3(7,2,-12)
+		});
+		sch.Add(new ScheduleItem{
+			Day = 0,
+			Weekday = 0,
+			Hour = 1,
+			Activity = "Stand",
+			Scene = "TestScene",
+			Position = new Vector3(-3,7,0)
+		});
+		sch.Add (new ScheduleItem{
+			Day = 0,
+			Weekday = 0,
+			Hour = 2,
+			Activity = "Stand",
+			Scene = "SceneTwo",
+			Position = new Vector3(1,1,1)
+		});
+		sch.Add (new ScheduleItem{
+			Day = 0,
+			Weekday = 0,
+			Hour = 3,
+			Activity = "Stand",
+			Scene = "TestScene",
+			Position = new Vector3(1,1,1),
+			FromExit = "SceneTwo"
+		});
+
 		// ----// ---- NPC Guy
 		Game.NPCs.Add (new NPCStateModel{
 			Name = "FirstNPC",
 			Position = new Vector3(3,3,3),
 			Dialog = d,
-			InitialDialogOptionId = 0
+			InitialDialogOptionId = 0,
+			WeeklySchedule = sch,
+			LifetimeSchedule = new List<ScheduleItem>()
 		});
 
 		// ---- Game State Intialization

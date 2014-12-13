@@ -10,7 +10,6 @@ public class NPC : MonoBehaviour {
 	public string Name;
 
 	public NPCStateModel State{get;set;}
-	public string CurrentActivity{get;set;}
 	public GameManager GameManager{get;set;}
 
 	bool DialogOpen = false;
@@ -30,10 +29,18 @@ public class NPC : MonoBehaviour {
 	Rect contentRect;
 
 	Seeker seeker;
-	float walkSpeed = 3.0f;
+	float walkSpeed = 3f;
 	Path currentPath;
 	int currentWaypoint = 0;
 	float nextWaypointDistance = 1f;
+	float moveLerper = 0.0f;
+	float accelerationPercent = 0.2f;
+	Vector3 moveDirection;
+	Vector3 dir;
+	Vector3 normDir;
+	float npcSize = 1.0f;
+	float moveMagnitude;
+	int currentHour = -1;
 
 	void Start () {
 
@@ -73,6 +80,7 @@ public class NPC : MonoBehaviour {
 			}
 		}
 
+		// Dummy start path toward player
 		if (Input.GetKeyDown("p")){
 			var player = GameObject.Find ("Player");
 			currentScheduleItem = new ScheduleItem{
@@ -82,7 +90,7 @@ public class NPC : MonoBehaviour {
 			seeker.StartPath (this.transform.position, player.transform.position, OnScheduledPathReady);
 		}
 
-		//CheckSchedule();
+		CheckSchedule();
 
 		if (currentPath != null){
 			if (currentWaypoint >= currentPath.vectorPath.Count) {
@@ -93,17 +101,47 @@ public class NPC : MonoBehaviour {
 			}
 			
 			//Direction to the next waypoint
-			Vector3 dir = (currentPath.vectorPath[currentWaypoint]-transform.position).normalized;
-			dir *= walkSpeed * Time.fixedDeltaTime;
-			this.transform.Translate (dir);
-			
-			//Check if we are close enough to the next waypoint
-			//If we are, proceed to follow the next waypoint
+			dir = (currentPath.vectorPath[currentWaypoint]-transform.position).normalized;
+
+			// Handle move acceleration through lerp
+			if (moveLerper != 1)
+			{
+				if (moveLerper < 1){
+					moveLerper += accelerationPercent;
+				}
+			}
+
 			if (Vector3.Distance (transform.position,currentPath.vectorPath[currentWaypoint]) < nextWaypointDistance) {
 				currentWaypoint++;
 			}
+		}else{
+			dir = new Vector3(0,0,0).normalized;
+			if (moveLerper != 0)
+			{
+				moveLerper = 0;
+			}
 		}
 
+		moveDirection = new Vector3(Mathf.Lerp (0, dir.x * walkSpeed * Time.deltaTime, moveLerper), 0, Mathf.Lerp (0, dir.z * walkSpeed * Time.deltaTime, moveLerper));
+		
+		// Collision detection for move
+		moveMagnitude = moveDirection.magnitude;
+		normDir = moveDirection / moveMagnitude;
+
+		RaycastHit rayHit;
+		if (!Physics.SphereCast (transform.position, npcSize/2, normDir, out rayHit, moveMagnitude)) {
+			transform.position = transform.position + moveDirection;
+		}else if (!Physics.SphereCast (transform.position + new Vector3(0f, 0.5f, 0f), npcSize/2, normDir, out rayHit, moveMagnitude)) {
+			transform.position = transform.position + moveDirection + new Vector3(0f, 0.5f, 0f);
+		}
+
+		//Gravity collision check & move
+		moveDirection = new Vector3(0f,-0.1f,0f);
+		moveMagnitude = moveDirection.magnitude;
+		RaycastHit gravRayHit;
+		if (!Physics.SphereCast (transform.position, npcSize/2, Vector3.down, out gravRayHit, moveMagnitude)) {
+			transform.position = transform.position + moveDirection;
+		}
 	}
 
 	void OnGUI(){
@@ -157,19 +195,32 @@ public class NPC : MonoBehaviour {
 	}
 
 	void CheckSchedule(){
-		var t = (int)GameManager.Game.Time / 60;
-		var d = GameManager.Game.Day;
-		var wd = GameManager.Game.WeekDay;
+		if (GameManager.Game.Hour != currentHour){
+			currentHour = GameManager.Game.Hour;
 
-		var item = this.State.WeeklySchedule.FirstOrDefault(s => s.Weekday == wd && s.Time == t);
-		if (item != null){
-			currentScheduleItem = item;
-			if (currentScheduleItem.Scene == GameManager.Game.Scene.Name){
-				seeker.StartPath (this.transform.position, currentScheduleItem.Position, OnScheduledPathReady);
-			}else{
-				// go to the appropriate exit!
+			var h = GameManager.Game.Hour;
+			var d = GameManager.Game.Day;
+			var wd = GameManager.Game.WeekDay;
+
+			var item = State.LifetimeSchedule.FirstOrDefault(s => s.Day == d && s.Hour == h);
+			if (item == null){
+				item = State.WeeklySchedule.FirstOrDefault(s => s.Weekday == wd && s.Hour == h);
+			}
+			if (item != null){
+				currentScheduleItem = item;
+				if (currentScheduleItem.Scene == GameManager.Game.Scene.Name){
+					seeker.StartPath (transform.position, currentScheduleItem.Position, OnScheduledPathReady);
+				}else{
+					var exit = GameManager.Game.Scene.Exits.FirstOrDefault(e => e.To == currentScheduleItem.Scene);
+					if (exit != null){
+						seeker.StartPath(transform.position, exit.Position, OnScheduledPathReady);
+					}else{
+						seeker.StartPath (transform.position, GameManager.Game.Scene.Exits.FirstOrDefault().Position, OnScheduledPathReady);
+					}
+				}
 			}
 		}
+
 	}
 
 	void OnScheduledPathReady(Path p)
@@ -180,6 +231,21 @@ public class NPC : MonoBehaviour {
 
 	void OnScheduledPathComplete()
 	{
-		this.CurrentActivity = currentScheduleItem.Activity;
+		State.Scene = currentScheduleItem.Scene;
+		State.Position = currentScheduleItem.Position;
+		State.Activity = currentScheduleItem.Activity;
+		SaveStateToGameManager();
+
+		if (currentScheduleItem.Scene != GameManager.Game.Scene.Name){
+			UnityEngine.Object.Destroy(this.gameObject);
+		}else{
+			currentWaypoint = 0;
+		}
 	}
+
+	void SaveStateToGameManager(){
+		var me = GameManager.Game.NPCs.FirstOrDefault(npc => npc.Name == this.Name);
+		me = State;
+	}
+
 }

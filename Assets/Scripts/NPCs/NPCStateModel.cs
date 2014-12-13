@@ -8,6 +8,8 @@ public class NPCStateModel {
 	public Vector3 Position{get;set;}
 	public int InitialDialogOptionId{get;set;}
 	public List<GameFlag> Flags{get;set;}
+	public string Scene{get;set;}
+	public string Activity{get;set;}
 
 	[JsonIgnore]
 	public List<ScheduleItem> WeeklySchedule{get;set;}

@@ -63,9 +63,7 @@ public class PlayerControl : MonoBehaviour {
 			{
 				if (moveLerper != 1)
 				{
-					if (moveLerper > 1){
-						moveLerper = 1;
-					}else{
+					if (moveLerper < 1){
 						moveLerper += accelerationPercent;
 					}
 				}

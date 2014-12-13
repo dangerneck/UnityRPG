@@ -14,6 +14,7 @@ public class GameStateModel
 
 	public int Day;
 	public float Time;
+	public int Hour;
 	public int WeekDay{
 		get{
 			return Day % 7;

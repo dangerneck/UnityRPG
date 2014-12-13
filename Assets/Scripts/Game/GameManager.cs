@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour {
 	public float ScreenXCenter;
 	public float ScreenYCenter;
 
+	int currentHour = -1;
+
 	// Use this for initialization
 	void Start () {
 		DontDestroyOnLoad(this);
@@ -33,7 +35,7 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown("space")){
-			StartGame ("Asshole");
+			StartGame ("Default");
 		}
 		if (Input.GetKeyDown ("z")){
 			StartGame ("Default");
@@ -59,9 +61,9 @@ public class GameManager : MonoBehaviour {
 	void ChangeScene(string sceneId)
 	{
 		var sceneRef = Game.Scenes.Where(s => s.Name == Game.Scene.Name).FirstOrDefault();
-		Game.Scenes.Add (Game.Scene);
-		Game.Scenes.Remove (sceneRef);
+		sceneRef = Game.Scene;
 		Game.Scene = Game.Scenes.Where (s => s.Name == sceneId).FirstOrDefault();
+		Game.Scene.NPCs = Game.NPCs.Where (npc => npc.Scene == Game.Scene.Name).ToList ();
 		Application.LoadLevel(sceneId);
 	}
 
@@ -98,6 +100,8 @@ public class GameManager : MonoBehaviour {
 		foreach(var item in Game.Scene.Objects){
 			item.CreateInWorld();
 		}
+
+		// TODO: Instantiate NPCs
 	}
 
 	void LoadAllTextures()
@@ -111,11 +115,19 @@ public class GameManager : MonoBehaviour {
 
 	void HandleTime(float t)
 	{
-		this.Game.Time += t;
-		if (this.Game.Time >= 1440){
-			float d = this.Game.Time - 1440;
-			this.Game.Time = d;
-			this.Game.Day += 1;
+		Game.Time += t*5;
+		Game.Hour = (int)Game.Time / 60;
+
+		if (Game.Time >= 1440){
+			float d = Game.Time - 1440;
+			Game.Time = d;
+			Game.Day += 1;
+			Game.Hour = 0;
+		}
+
+		if (Game.Hour != currentHour){
+			currentHour = Game.Hour;
+			CheckAllAbsentSchedules();
 		}
 	}
 
@@ -152,6 +164,35 @@ public class GameManager : MonoBehaviour {
 		GameStateModel game = new GameStateModel();
 		game = (GameStateModel)JsonConvert.DeserializeObject(System.IO.File.ReadAllText(name + ".txt"), typeof(GameStateModel));
 		return game;
+	}
+
+	void CheckAllAbsentSchedules()
+	{
+		var npcs = Game.NPCs.Where (npc => npc.Scene != Game.Scene.Name).ToList ();
+		foreach(var npc in npcs){
+			var item = npc.LifetimeSchedule.FirstOrDefault(s => s.Day == Game.Day && s.Hour == Game.Hour);
+			if (item == null){
+				item = npc.WeeklySchedule.FirstOrDefault(s => s.Weekday == Game.WeekDay && s.Hour == Game.Hour);
+			}
+			if (item.Scene == this.Game.Scene.Name){
+				Vector3 instantiatePos;
+				if (!string.IsNullOrEmpty(item.FromExit)){
+					instantiatePos = Game.Scene.Exits.FirstOrDefault (e => e.To == item.FromExit).Position;
+				}else{
+					instantiatePos = Game.Scene.Exits.FirstOrDefault().Position;
+				}
+				GameObject prefab = (GameObject)Resources.Load("Prefabs/NPC");
+				var instance = (GameObject)UnityEngine.Object.Instantiate(prefab, instantiatePos, Quaternion.identity);
+				var npcInstanceState = instance.GetComponent<NPC>();
+				npcInstanceState.State = npc;
+				npcInstanceState.GameManager = this;
+				npcInstanceState.enabled = true;
+			}else{
+				npc.Activity = item.Activity;;
+				npc.Position = item.Position;
+				npc.Scene = item.Scene;
+			}
+		}
 	}
 }
 
