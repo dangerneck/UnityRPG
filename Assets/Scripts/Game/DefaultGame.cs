@@ -142,7 +142,8 @@ public class DefaultGame  {
 			Dialog = d,
 			InitialDialogOptionId = 0,
 			WeeklySchedule = sch,
-			LifetimeSchedule = new List<ScheduleItem>()
+			LifetimeSchedule = new List<ScheduleItem>(),
+			Scene = "TestScene"
 		});
 
 		// ---- Game State Intialization

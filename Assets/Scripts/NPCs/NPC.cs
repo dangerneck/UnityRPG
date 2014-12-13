@@ -11,6 +11,7 @@ public class NPC : MonoBehaviour {
 
 	public NPCStateModel State{get;set;}
 	public GameManager GameManager{get;set;}
+	public bool TeleportToScheduleItem{get;set;}
 
 	bool DialogOpen = false;
 	DialogItem CurrentDialogItem;
@@ -209,7 +210,14 @@ public class NPC : MonoBehaviour {
 			if (item != null){
 				currentScheduleItem = item;
 				if (currentScheduleItem.Scene == GameManager.Game.Scene.Name){
-					seeker.StartPath (transform.position, currentScheduleItem.Position, OnScheduledPathReady);
+					if (TeleportToScheduleItem){
+						transform.position = item.Position;
+						TeleportToScheduleItem = false;
+						OnScheduledPathComplete();
+					}else{
+						seeker.StartPath (transform.position, currentScheduleItem.Position, OnScheduledPathReady);
+					}
+
 				}else{
 					var exit = GameManager.Game.Scene.Exits.FirstOrDefault(e => e.To == currentScheduleItem.Scene);
 					if (exit != null){

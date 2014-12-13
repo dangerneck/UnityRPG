@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown("space")){
-			StartGame ("Default");
+			StartGame ("Asshole");
 		}
 		if (Input.GetKeyDown ("z")){
 			StartGame ("Default");
@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
 		sceneRef = Game.Scene;
 		Game.Scene = Game.Scenes.Where (s => s.Name == sceneId).FirstOrDefault();
 		Game.Scene.NPCs = Game.NPCs.Where (npc => npc.Scene == Game.Scene.Name).ToList ();
-		Application.LoadLevel(sceneId);
+		Application.LoadLevel (sceneId);
 	}
 
 	void OnLevelWasLoaded(int index)
@@ -100,8 +100,9 @@ public class GameManager : MonoBehaviour {
 		foreach(var item in Game.Scene.Objects){
 			item.CreateInWorld();
 		}
-
-		// TODO: Instantiate NPCs
+		foreach(var npc in Game.Scene.NPCs){
+			npc.CreateInScene();
+		}
 	}
 
 	void LoadAllTextures()
@@ -181,12 +182,7 @@ public class GameManager : MonoBehaviour {
 				}else{
 					instantiatePos = Game.Scene.Exits.FirstOrDefault().Position;
 				}
-				GameObject prefab = (GameObject)Resources.Load("Prefabs/NPC");
-				var instance = (GameObject)UnityEngine.Object.Instantiate(prefab, instantiatePos, Quaternion.identity);
-				var npcInstanceState = instance.GetComponent<NPC>();
-				npcInstanceState.State = npc;
-				npcInstanceState.GameManager = this;
-				npcInstanceState.enabled = true;
+				npc.CreateInScene(instantiatePos);
 			}else{
 				npc.Activity = item.Activity;;
 				npc.Position = item.Position;
