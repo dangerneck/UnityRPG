@@ -111,6 +111,7 @@
      <Compile Include="Assets\Scripts\Containers\ContainedObjectModel.cs" />
      <Compile Include="Assets\Scripts\Containers\Container.cs" />
      <Compile Include="Assets\Scripts\Containers\ContainerModel.cs" />
+     <Compile Include="Assets\Scripts\Game\ChangeSceneModel.cs" />
      <Compile Include="Assets\Scripts\Game\DefaultGame.cs" />
      <Compile Include="Assets\Scripts\Game\GameFlag.cs" />
      <Compile Include="Assets\Scripts\Game\GameManager.cs" />
@@ -129,6 +130,8 @@
      <Compile Include="Assets\Scripts\Player\HideOnCameraLine.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerControl.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStateModel.cs" />
+     <Compile Include="Assets\Scripts\Player\PlayerTeleport.cs" />
+     <Compile Include="Assets\Scripts\Player\TeleportModel.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using System;
 
 public class GameManager : MonoBehaviour {
 
@@ -51,20 +52,36 @@ public class GameManager : MonoBehaviour {
 	{
 		if (saveId != "Default"){
 			Game = LoadGame(saveId);
-			ChangeScene (Game.Scene.Name);
+			ChangeScene (new ChangeSceneModel{ SceneId = Game.Scene.Name, OnComplete = null});
 		}else{
 			Game = DGame.Game;
-			ChangeScene (Game.Scene.Name);
+			ChangeScene (new ChangeSceneModel{ SceneId = Game.Scene.Name, OnComplete = null});
 		}
 	}
 
-	void ChangeScene(string sceneId)
+	void ChangeScene(ChangeSceneModel m)
 	{
-		var sceneRef = Game.Scenes.Where(s => s.Name == Game.Scene.Name).FirstOrDefault();
-		sceneRef = Game.Scene;
-		Game.Scene = Game.Scenes.Where (s => s.Name == sceneId).FirstOrDefault();
-		Game.Scene.NPCs = Game.NPCs.Where (npc => npc.Scene == Game.Scene.Name).ToList ();
-		Application.LoadLevel (sceneId);
+		//Set all scheduled task items for those currently moving to their place
+		foreach(var npc in Game.NPCs){
+			if (npc.Scene == Game.Scene.Name){
+				var item = npc.LifetimeSchedule.FirstOrDefault(s => s.Day == Game.Day && s.Hour == Game.Hour);
+				if (item == null){
+					item = npc.WeeklySchedule.FirstOrDefault(s => s.Weekday == Game.WeekDay && s.Hour == Game.Hour);
+				}
+				if (item != null){
+					npc.Activity = item.Activity;;
+					npc.Position = item.Position;
+					npc.Scene = item.Scene;
+				}
+			}
+		}
+
+		Game.Scene = Game.Scenes.Where (s => s.Name == m.SceneId).FirstOrDefault();
+
+		Application.LoadLevel (m.SceneId);
+		if (m.OnComplete != null){
+			m.OnComplete();
+		}
 	}
 
 	void OnLevelWasLoaded(int index)
@@ -79,16 +96,8 @@ public class GameManager : MonoBehaviour {
 					comt.GameManager = this;
 					comt.enabled = true;
 				}
-				// Instead we should instantiate the player prefab but let's just do this for now TODO
-				var player = c.GetComponent<PlayerControl>();
-				if (player != null)
-				{
-					player.GameManager = this;
-					player.enabled = true;
-					player.State = Game.PlayerState;
-				}
 
-				// This is where you'd create NPCs in the current scene.
+				// Enable hard-coded npcs
 				if (npc != null){
 					npc.GameManager = this;
 					npc.enabled = true;
@@ -96,11 +105,22 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+		// Instantiate the player
+		GameObject playerPrefab = (GameObject)Resources.Load("Prefabs/PlayerPrefab");
+		var instance = (GameObject)UnityEngine.Object.Instantiate(playerPrefab, new Vector3(1f,1.5f,-10f), Quaternion.identity);
+		var player = instance.GetComponentInChildren<PlayerControl>();
+		if (player != null)
+		{
+			player.GameManager = this;
+			player.enabled = true;
+			player.State = Game.PlayerState;
+		}
+
 		// Instantiate Items
 		foreach(var item in Game.Scene.Objects){
 			item.CreateInWorld();
 		}
-		foreach(var npc in Game.Scene.NPCs){
+		foreach(var npc in Game.NPCs.Where (n => n.Scene == Game.Scene.Name)){
 			npc.CreateInScene();
 		}
 	}
@@ -167,26 +187,35 @@ public class GameManager : MonoBehaviour {
 		return game;
 	}
 
-	void CheckAllAbsentSchedules()
+	void CheckAllAbsentSchedules(bool forceAll = false)
 	{
-		var npcs = Game.NPCs.Where (npc => npc.Scene != Game.Scene.Name).ToList ();
-		foreach(var npc in npcs){
+		List<NPCStateModel> absentNpcs = new List<NPCStateModel>();
+		if (forceAll){
+			absentNpcs = Game.NPCs;
+		}else{
+			absentNpcs = Game.NPCs.Where (npc => npc.Scene != Game.Scene.Name).ToList ();
+		}
+
+		foreach(var npc in absentNpcs){
 			var item = npc.LifetimeSchedule.FirstOrDefault(s => s.Day == Game.Day && s.Hour == Game.Hour);
 			if (item == null){
 				item = npc.WeeklySchedule.FirstOrDefault(s => s.Weekday == Game.WeekDay && s.Hour == Game.Hour);
 			}
-			if (item.Scene == this.Game.Scene.Name){
-				Vector3 instantiatePos;
-				if (!string.IsNullOrEmpty(item.FromExit)){
-					instantiatePos = Game.Scene.Exits.FirstOrDefault (e => e.To == item.FromExit).Position;
+			if (item != null){
+				if (item.Scene == this.Game.Scene.Name){
+					Vector3 instantiatePos;
+					if (!string.IsNullOrEmpty(item.FromExit)){
+						instantiatePos = Game.Scene.Exits.FirstOrDefault (e => e.To == item.FromExit).Position;
+					}else{
+						instantiatePos = Game.Scene.Exits.FirstOrDefault().Position;
+					}
+					npc.Scene = this.Game.Scene.Name;
+					npc.CreateInScene(instantiatePos);
 				}else{
-					instantiatePos = Game.Scene.Exits.FirstOrDefault().Position;
+					npc.Activity = item.Activity;;
+					npc.Position = item.Position;
+					npc.Scene = item.Scene;
 				}
-				npc.CreateInScene(instantiatePos);
-			}else{
-				npc.Activity = item.Activity;;
-				npc.Position = item.Position;
-				npc.Scene = item.Scene;
 			}
 		}
 	}

@@ -63,6 +63,14 @@ public class DefaultGame  {
 			ItemId = Guid.NewGuid().ToString()
 		});
 
+		SceneModel SceneTwo = new SceneModel();
+		SceneTwo.Name = "SceneTwo";
+		SceneTwo.Exits = new List<SceneExitModel>();
+		SceneTwo.Exits.Add (new SceneExitModel{
+			Position = new Vector3(8,1.6f,-4),
+			To = "TestScene"
+		});
+
 
 		// ---- NPCs
 		// ----// ---- NPC Dialog
@@ -123,7 +131,7 @@ public class DefaultGame  {
 			Hour = 2,
 			Activity = "Stand",
 			Scene = "SceneTwo",
-			Position = new Vector3(1,1,1)
+			Position = new Vector3(1,1.6f,1)
 		});
 		sch.Add (new ScheduleItem{
 			Day = 0,
@@ -131,7 +139,7 @@ public class DefaultGame  {
 			Hour = 3,
 			Activity = "Stand",
 			Scene = "TestScene",
-			Position = new Vector3(1,1,1),
+			Position = new Vector3(1,1.6f,1),
 			FromExit = "SceneTwo"
 		});
 
@@ -148,6 +156,7 @@ public class DefaultGame  {
 
 		// ---- Game State Intialization
 		Game.Scenes.Add (TestScene);
+		Game.Scenes.Add(SceneTwo);
 
 		Game.Scene = TestScene;
 

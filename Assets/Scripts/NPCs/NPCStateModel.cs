@@ -31,7 +31,7 @@ public class NPCStateModel {
 	}
 	public void CreateInScene(){
 		GameObject prefab = (GameObject)Resources.Load("Prefabs/NPC");
-		var instance = (GameObject)UnityEngine.Object.Instantiate(prefab, new Vector3(-1000,-1000,-1000), Quaternion.identity);
+		var instance = (GameObject)UnityEngine.Object.Instantiate(prefab, this.Position, Quaternion.identity);
 		var npcInstanceState = instance.GetComponent<NPC>();
 		npcInstanceState.State = this;
 		npcInstanceState.TeleportToScheduleItem = true;
