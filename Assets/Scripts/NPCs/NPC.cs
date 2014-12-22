@@ -92,57 +92,8 @@ public class NPC : MonoBehaviour {
 		}
 
 		CheckSchedule();
+		HandleMove ();
 
-		if (currentPath != null){
-			if (currentWaypoint >= currentPath.vectorPath.Count) {
-				currentPath = null;
-				currentWaypoint = 0;
-				OnScheduledPathComplete();
-				return;
-			}
-			
-			//Direction to the next waypoint
-			dir = (currentPath.vectorPath[currentWaypoint]-transform.position).normalized;
-
-			// Handle move acceleration through lerp
-			if (moveLerper != 1)
-			{
-				if (moveLerper < 1){
-					moveLerper += accelerationPercent;
-				}
-			}
-
-			if (Vector3.Distance (transform.position,currentPath.vectorPath[currentWaypoint]) < nextWaypointDistance) {
-				currentWaypoint++;
-			}
-		}else{
-			dir = new Vector3(0,0,0).normalized;
-			if (moveLerper != 0)
-			{
-				moveLerper = 0;
-			}
-		}
-
-		moveDirection = new Vector3(Mathf.Lerp (0, dir.x * walkSpeed * Time.deltaTime, moveLerper), 0, Mathf.Lerp (0, dir.z * walkSpeed * Time.deltaTime, moveLerper));
-		
-		// Collision detection for move
-		moveMagnitude = moveDirection.magnitude;
-		normDir = moveDirection / moveMagnitude;
-
-		RaycastHit rayHit;
-		if (!Physics.SphereCast (transform.position, npcSize/2, normDir, out rayHit, moveMagnitude)) {
-			transform.position = transform.position + moveDirection;
-		}else if (!Physics.SphereCast (transform.position + new Vector3(0f, 0.5f, 0f), npcSize/2, normDir, out rayHit, moveMagnitude)) {
-			transform.position = transform.position + moveDirection + new Vector3(0f, 0.5f, 0f);
-		}
-
-		//Gravity collision check & move
-		moveDirection = new Vector3(0f,-0.1f,0f);
-		moveMagnitude = moveDirection.magnitude;
-		RaycastHit gravRayHit;
-		if (!Physics.SphereCast (transform.position, npcSize/2, Vector3.down, out gravRayHit, moveMagnitude)) {
-			transform.position = transform.position + moveDirection;
-		}
 	}
 
 	void OnGUI(){
@@ -169,6 +120,60 @@ public class NPC : MonoBehaviour {
 				CloseDialog ();
 			}
 			GUI.EndScrollView();
+		}
+	}
+
+	void HandleMove()
+	{
+		if (currentPath != null){
+			if (currentWaypoint >= currentPath.vectorPath.Count) {
+				currentPath = null;
+				currentWaypoint = 0;
+				OnScheduledPathComplete();
+				return;
+			}
+			
+			//Direction to the next waypoint
+			dir = (currentPath.vectorPath[currentWaypoint]-transform.position).normalized;
+			
+			// Handle move acceleration through lerp
+			if (moveLerper != 1)
+			{
+				if (moveLerper < 1){
+					moveLerper += accelerationPercent;
+				}
+			}
+			
+			if (Vector3.Distance (transform.position,currentPath.vectorPath[currentWaypoint]) < nextWaypointDistance) {
+				currentWaypoint++;
+			}
+		}else{
+			dir = new Vector3(0,0,0).normalized;
+			if (moveLerper != 0)
+			{
+				moveLerper = 0;
+			}
+		}
+		
+		moveDirection = new Vector3(Mathf.Lerp (0, dir.x * walkSpeed * Time.deltaTime, moveLerper), 0, Mathf.Lerp (0, dir.z * walkSpeed * Time.deltaTime, moveLerper));
+		
+		// Collision detection for move
+		moveMagnitude = moveDirection.magnitude;
+		normDir = moveDirection / moveMagnitude;
+		
+		RaycastHit rayHit;
+		if (!Physics.SphereCast (transform.position, npcSize/2, normDir, out rayHit, moveMagnitude)) {
+			transform.position = transform.position + moveDirection;
+		}else if (!Physics.SphereCast (transform.position + new Vector3(0f, 0.5f, 0f), npcSize/2, normDir, out rayHit, moveMagnitude)) {
+			transform.position = transform.position + moveDirection + new Vector3(0f, 0.5f, 0f);
+		}
+		
+		//Gravity collision check & move
+		moveDirection = new Vector3(0f,-0.1f,0f);
+		moveMagnitude = moveDirection.magnitude;
+		RaycastHit gravRayHit;
+		if (!Physics.SphereCast (transform.position, npcSize/2, Vector3.down, out gravRayHit, moveMagnitude)) {
+			transform.position = transform.position + moveDirection;
 		}
 	}
 

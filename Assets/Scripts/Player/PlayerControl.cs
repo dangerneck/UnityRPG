@@ -21,9 +21,18 @@ public class PlayerControl : MonoBehaviour {
 	Transform body;
 	Texture Gump;
 	GameObject Inventory;
-
+	float halfPlayerSize;
 	bool IsInventoryOpen = false;
 	int InventoryPointer = 0;
+	float wCenter;
+	float hCenter;
+	float cx;
+	float cy;
+	float thirdX;
+	float thirdY;
+	float halfGumpWidth;
+	int centreW;
+	int centreH;
 	
 	void Start () {
 		body = this.transform;
@@ -33,6 +42,16 @@ public class PlayerControl : MonoBehaviour {
 		playerBounds = new Vector3[4];
 		Gump = GameManager.LoadedTextures.FirstOrDefault(x => x.Key == "Placeholder Container").Value;
 		Inventory = GameObject.Find ("Inventory");
+		halfPlayerSize = playerSize / 2;
+		wCenter = Screen.width/2;
+		hCenter = Screen.height/2;
+		thirdX = Screen.width / 3;
+		thirdY = Screen.height / 3;
+		halfGumpWidth = Gump.width / 2;
+		cx = thirdX - Gump.width/2;
+		cy = hCenter - Gump.height/2;
+		centreW = State.Inventory.Width/2;
+		centreH = State.Inventory.Height/2;
 	}
 
 	public void ClaimControlFocus(GameObject g = null){
@@ -74,10 +93,11 @@ public class PlayerControl : MonoBehaviour {
 		if (controlFocus == this.gameObject){
 			HandleMove();
 			HandleGeneralInput();
+		}else if (controlFocus == Inventory){
+			HandleInventoryInput();
 		}
 
 		// Update player bounds
-		float halfPlayerSize = playerSize / 2;
 		playerBounds[0] = new Vector3(body.position.x - halfPlayerSize, body.position.y + halfPlayerSize, body.position.z + halfPlayerSize);
 		playerBounds[1] = new Vector3(body.position.x + halfPlayerSize, body.position.y + halfPlayerSize, body.position.z - halfPlayerSize);
 		playerBounds[2] = new Vector3(body.position.x - halfPlayerSize, body.position.y - halfPlayerSize, body.position.z - halfPlayerSize);
@@ -92,18 +112,20 @@ public class PlayerControl : MonoBehaviour {
 	{
 		if (IsInventoryOpen)
 		{
-			float wCenter = Screen.width/2;
-			float hCenter = Screen.height/2;
-			float cx = wCenter - Gump.width/2;
-			float cy = hCenter - Gump.height/2;
-			int centreW = State.Inventory.Width/2;
-			int centreH = State.Inventory.Height/2;
 			GUI.DrawTexture(new Rect(cx, cy, Gump.width, Gump.height), Gump);
-			var textures = GameManager.LoadedTextures;
-			
+			Rect descriptionBox = new Rect(thirdX + halfGumpWidth, cy, halfGumpWidth, Gump.height);
+			if (State.Inventory.containedObjects.Count > InventoryPointer){
+				if (State.Inventory.containedObjects.ElementAt (InventoryPointer) != null){
+					GUI.Box (descriptionBox,State.Inventory.containedObjects.ElementAt(InventoryPointer).Type);
+					// TODO: add a dscriptions lookup for item by type to display more shit.
+				}
+			}
+
+			    
+			var textures = GameManager.LoadedTextures;			
 			for(int j = 0; j < State.Inventory.Width; j++){
 				for (int i = 0; i < State.Inventory.Height; i++){
-					float spaceX = wCenter - ((centreW - i) * 32);
+					float spaceX = thirdX - ((centreW - i) * 32);
 					float spaceY = hCenter - ((centreH - j) * 32);
 					bool active = i +(j*State.Inventory.Width) == InventoryPointer;
 					GUI.DrawTexture(new Rect(spaceX, spaceY, 32, 32), active ? textures["Container Slot Active"]: textures["Container Slot"]);
@@ -180,45 +202,43 @@ public class PlayerControl : MonoBehaviour {
 				}
 			}
 		}
+	}
 
+	void HandleInventoryInput(){
 		if (IsInventoryOpen){
-			if (controlFocus == Inventory)
-			{
-				if (Input.GetKeyDown("left")){
-					InventoryPointer--;
-				}
-				if (Input.GetKeyDown("right")){
-					InventoryPointer++;
-				}
-				if (Input.GetKeyDown("up")){
-					InventoryPointer -= State.Inventory.Width;
-				}
-				if (Input.GetKeyDown("down")){
-					InventoryPointer += State.Inventory.Width;
-				}
-				
-				if (Input.GetKeyDown("z")){
-					// TODO: Use???
-				}
-				
-				if (Input.GetKeyDown("x")){
-					var o = State.Inventory.containedObjects.ElementAt(InventoryPointer);
-					if (o != null){
-						o.CreateInWorld(new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y - 0.5f, this.gameObject.transform.position.z));
-						State.Inventory.containedObjects.Remove (o);
-						GameManager.Game.Scene.Objects.Add(o);
-					}
-				}
-				
-				if (InventoryPointer < 0){ InventoryPointer = 0; }
-				if (InventoryPointer > State.Inventory.Width * State.Inventory.Height - 1){ InventoryPointer = State.Inventory.Width * State.Inventory.Height - 1; }
-				
-				if (Input.GetKeyDown("c")){
-					InventoryClose ();
-				}	
+			if (Input.GetKeyDown("left")){
+				InventoryPointer--;
 			}
+			if (Input.GetKeyDown("right")){
+				InventoryPointer++;
+			}
+			if (Input.GetKeyDown("up")){
+				InventoryPointer -= State.Inventory.Width;
+			}
+			if (Input.GetKeyDown("down")){
+				InventoryPointer += State.Inventory.Width;
+			}
+			
+			if (Input.GetKeyDown("z")){
+				// TODO: Use???
+			}
+			
+			if (Input.GetKeyDown("x")){
+				var o = State.Inventory.containedObjects.ElementAt(InventoryPointer);
+				if (o != null){
+					o.CreateInWorld(new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y - 0.5f, this.gameObject.transform.position.z));
+					State.Inventory.containedObjects.Remove (o);
+					GameManager.Game.Scene.Objects.Add(o);
+				}
+			}
+			
+			if (InventoryPointer < 0){ InventoryPointer = 0; }
+			if (InventoryPointer > State.Inventory.Width * State.Inventory.Height - 1){ InventoryPointer = State.Inventory.Width * State.Inventory.Height - 1; }
+			
+			if (Input.GetKeyDown("c")){
+				InventoryClose ();
+			}	
 		}
-
 	}
 
 }

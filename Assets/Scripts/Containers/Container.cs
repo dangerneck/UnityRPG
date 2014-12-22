@@ -23,7 +23,7 @@ public class Container : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		var loadedContainer = FindObjectOfType<GameManager>().Game.Scene.Containers.Where(c => c.ContainerId == ContainerId).FirstOrDefault();
+		var loadedContainer = FindObjectOfType<GameManager>().Game.Scene.Containers.FirstOrDefault(c => c.ContainerId == ContainerId);
 		State = loadedContainer; 
 
 		cx = GameManager.ScreenXCenter - Gump.width/2;
