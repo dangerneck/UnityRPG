@@ -31,8 +31,8 @@ public class HideOnCameraLine : MonoBehaviour {
 
 		if (Physics.Raycast(camera.transform.position, direction, out checkIntersect, distance))
 		{
-			hiddenRenderers.Add(checkIntersect.transform.renderer);
-			checkIntersect.transform.renderer.enabled = false;
+			hiddenRenderers.Add(checkIntersect.transform.GetComponent<Renderer>());
+			checkIntersect.transform.GetComponent<Renderer>().enabled = false;
 		}
 
 

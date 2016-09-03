@@ -38,7 +38,7 @@ public class Container : MonoBehaviour
 		if (!Opened){
 			if (Input.GetMouseButton(0)){
 				var maincam = GameObject.Find ("Main Camera");
-				Ray ray = maincam.camera.ScreenPointToRay(Input.mousePosition);
+				Ray ray = maincam.GetComponent<Camera>().ScreenPointToRay(Input.mousePosition);
 				RaycastHit[] hits;
 				hits = Physics.RaycastAll (ray);
 				foreach (var h in hits){
