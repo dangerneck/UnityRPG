@@ -1,6 +1,7 @@
 # Unity RPG Project
+#### Previously titled 'CrapGame'
 
-This is a WIP RPG game project for Unity written in C#. 
+This is a WIP RPG game project for Unity written in C#. Most things of interest can be found in `/Assets/Scripts`
 
 >I have not touched this since December 2014 so it is a little aged and sloppy but some ideas are fun and the basic design isn't too bad.
 
